@@ -1,2 +1,2 @@
 const prototype = require('./Prototyping/run');
-const prototype = require('./Concatenative/run');
+const concatenative = require('./Concatenative/run');
