@@ -3,7 +3,7 @@ function dEvent(place)
 {
     const options = {place}
     let d = new Date()
-    let t = d.toLocaleTimeString();
+    let t = d.toLocaleTimeString(); //perhaps use this method to set the date at object creation
     function getTime() { return t }
     function getPlace() { return place }
     function toString() 
@@ -40,7 +40,7 @@ function dataType(type, unit)
 }
 
 console.log("Event Test")
-let time1 = dEvent("Copenhagen")
+let time1 = dEvent("Copenhagen") //how to pass time into the object?
 console.log(time1.toString())
 console.log()
 
@@ -68,7 +68,8 @@ function weatherPrediction(place, type, unit, fromNumber, toNumber)
 }
 
 console.log("WeatherPrediction Test")
-let wp = weatherPrediction("Aarhus", "temperature", "Celsius", 13, 20)
+let wp = weatherPrediction(time1.getPlace(), dT.getType(), dT.getUnit(), 13, 20)
+//how do I pass the object values into the subclass?
 console.log(wp.toString())
 console.log(wp.numberFrom())
 console.log()
@@ -97,20 +98,21 @@ function tempPrediction(fromNumber, toNumber) //is there a way to get to and fro
 }
 
 console.log("Temp test")
-let tp = tempPrediction(13, 20)
+let tp = tempPrediction(wp.numberFrom(), wp.numberTo())
 console.log(tp.toString())
 tp.convertToF()
 console.log(tp.toString())
 console.log(tp.numberTo())
 
 //PrecipitationPrediction
-function precipPrediction(precip, fromNumber, toNumber)
+function precipPrediction(fromNumber, toNumber)
 {
-    //let precip = ["rain", "sleet", "snow", "hail"]
+    const options = {fromNumber, toNumber}
     //Return type of string array, it is possible to have different kinds of precip in one day
-    function types(precip)
+    function types() //the type is established in the super class datatype?  compares boolean
     {
-        return null;
+        let precip = ["rain", "sleet", "snow", "hail"]
+        return precip;
     }
     function convertToInches()
     {
@@ -127,27 +129,34 @@ function precipPrediction(precip, fromNumber, toNumber)
         return fromNumber + " " + toNumber + " " 
     }
 
-    return { convertToInches, convertToMM }
+    return { types, convertToInches, convertToMM, toString }
 }
 
 //WindPrediction
-function windPrediction(number)
+function windPrediction(fromNumber, toNumber)
 {
-    let direction = ["north", "south", "east", "west"]
-    function directions()
+    const options = {fromNumber, toNumber}
+    function directions() //the type is established in the super class datatype?
     {
-
+        let direction = ["north", "south", "east", "west"]
+        return direction
     }
     function convertToMPH()
     {
-        number = number * 2,237
+        fromNumber = fromNumber * 2,237
+        toNumber = toNumber * 2,237
     }
     function convertToMS()
     {
-        number = number / 2,237
+        fromNumber = fromNumber / 2,237
+        toNumber = toNumber / 2,237
+    }
+    function toString()
+    {
+        return fromNumber + " " + toNumber + " " 
     }
 
-    return { convertToMPH, convertToMS }
+    return { directions, convertToMPH, convertToMS, toString }
 }
 
 //CloudPrediction
@@ -158,8 +167,12 @@ function cloudPrediction(number)
     {
 
     }
+    function toString()
+    {
+        return fromNumber + " " + toNumber + " " 
+    }
 
-    return { coverage }
+    return { coverage, toString }
 }
 
 //DateInterval
