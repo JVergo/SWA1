@@ -12,6 +12,8 @@ const ColudCoveragePrediction = require('./WeatherPrediction/ColudCoveragePredic
 
 const DateInterval = require('./DateInterval');
 
+console.log("Starting prototype part");
+
 const history = new WeatherHistory([]);
 const forecast = new WeatherForecast([]);
 
