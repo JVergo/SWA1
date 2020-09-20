@@ -213,36 +213,41 @@ function dateInterval(from, to)
 }
 
 //WeatherForecast
-function getWeatherForecast(data)
+function weatherForecast(prediction)
 {
-    //returns the forecast
-    //forecastArray.forEach(forecast => console.log(forecast))
-    return forecastArray[data]
-}
-function add(data)
-{
-    //adds predictions to the WeatherPrediction array
-    forecastArray.push(data)
-}
-function data()
-{
-    //returns a single prediction? 
-    //return forecastArray[index]
-    //console.log(forecastArray[0])
-    return forecastArray
-}
-function getCurrentPlace() 
-{
-    //return data.getPlace()
-}
-function clearCurrentPlace() {}
-function getCurrentType() {}
-function clearCurrentType() {}
-function getCurrentPeriod() {}
-function clearCurrentPeriod() {}
-// setCurrentPeriod()
+    //console.log(data[0])
+    let forecastArray = prediction
 
-return { getWeatherForecast, add, data }
+    function getWeatherForecast(data)
+    {
+        //returns the forecast
+        //forecastArray.forEach(forecast => console.log(forecast))
+        return forecastArray[data]
+    }
+    function add(data)
+    {
+        //adds predictions to the WeatherPrediction array
+        forecastArray.push(data)
+    }
+    function data()
+    {
+        //returns a single prediction? 
+        //return forecastArray[index]
+        //console.log(forecastArray[0])
+        return forecastArray
+    }
+    function getCurrentPlace() 
+    {
+        //return data.getPlace()
+    }
+    function clearCurrentPlace() {}
+    function getCurrentType() {}
+    function clearCurrentType() {}
+    function getCurrentPeriod() {}
+    function clearCurrentPeriod() {}
+    // setCurrentPeriod()
+
+    return { getWeatherForecast, add, data }
 }
 
 const temp = [wp, wp]
