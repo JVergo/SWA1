@@ -49,7 +49,7 @@ function weatherPrediction(dEvent, dataType, fromNumber, toNumber)
     function getNumberTo() { return options.toNumber }
 
     //Object.assign(options, dEvent(options.place), dataType(options.type, options.unit))
-    //Assigns everything from inside the passed parameters to the leftmost object.
+    //Assigns everything from inside the passed parameters to the object.
     Object.assign(options, dEvent, dataType)
     function toString() 
     {
@@ -199,7 +199,7 @@ function dateInterval(from, to)
     function fromDate() { return from }
     function toDate() { return to }
     function contains(d) {
-        if(d >= fromDate || d <= toDate)
+        if(d >= fromDate && d <= toDate)
         {
             return true
         }	
@@ -207,53 +207,62 @@ function dateInterval(from, to)
         {
             return false
         }
-	}
+    }
+    function toString()
+    {
+        return "From: " + from + " To: " + to
+    }
 
-	return { toDate, fromDate, contains }
+	return { toDate, fromDate, contains, toString }
 }
+
+console.log("DateInterval Test")
+let dI = dateInterval('2020/11/27', '2020/12/4')
+console.log(dI.toString())
+//console.log(dI.contains('2020/11/30')) returns false when it should be true
+console.log()
 
 //WeatherForecast
 function weatherForecast(prediction)
 {
-    //console.log(data[0])
+    const options = {}
     let forecastArray = prediction
 
     function getWeatherForecast(data)
     {
-        //returns the forecast
-        //forecastArray.forEach(forecast => console.log(forecast))
         return forecastArray[data]
     }
     function add(data)
     {
-        //adds predictions to the WeatherPrediction array
         forecastArray.push(data)
     }
     function data()
     {
-        //returns a single prediction? 
-        //return forecastArray[index]
-        //console.log(forecastArray[0])
         return forecastArray
     }
     function getCurrentPlace() 
     {
-        //return data.getPlace()
+        //return prediction.getPlace()
     }
     function clearCurrentPlace() {}
-    function getCurrentType() {}
+    function getCurrentType() 
+    {
+        //return prediction.getType()
+    }
     function clearCurrentType() {}
     function getCurrentPeriod() {}
     function clearCurrentPeriod() {}
-    // setCurrentPeriod()
+    // setter methods?
 
-    return { getWeatherForecast, add, data }
+    return { ...options, getWeatherForecast, add, data, getCurrentPlace, getCurrentType }
 }
 
 const temp = [wp, wp]
 let wf = weatherForecast(temp)
-//wf.add(wp)
 console.log(wf.data())
+wf.add(wp)
+console.log(wf.data())
+//console.log(wf.getCurrentPlace())
 
 //     function WeatherEvent(place) {
 //     const event = { timeECMA: new Date().toLocaleDateString(), place };
