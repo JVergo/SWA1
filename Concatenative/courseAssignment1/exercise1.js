@@ -213,45 +213,42 @@ function dateInterval(from, to)
 }
 
 //WeatherForecast
-function weatherForecast(data)
+function getWeatherForecast(data)
 {
-    let forecastArray = []
+    //returns the forecast
+    //forecastArray.forEach(forecast => console.log(forecast))
+    return forecastArray[data]
+}
+function add(data)
+{
+    //adds predictions to the WeatherPrediction array
+    forecastArray.push(data)
+}
+function data()
+{
+    //returns a single prediction? 
+    //return forecastArray[index]
+    //console.log(forecastArray[0])
+    return forecastArray
+}
+function getCurrentPlace() 
+{
+    //return data.getPlace()
+}
+function clearCurrentPlace() {}
+function getCurrentType() {}
+function clearCurrentType() {}
+function getCurrentPeriod() {}
+function clearCurrentPeriod() {}
+// setCurrentPeriod()
 
-    function getWeatherForecast(data)
-    {
-        //returns the forecast
-        //forecastArray.forEach(forecast => console.log(forecast))
-        return forecastArray[data]
-    }
-    function add(data)
-    {
-        //adds predictions to the WeatherPrediction array
-        forecastArray.push(data)
-    }
-    function data()
-    {
-        //returns a single prediction? 
-        //return forecastArray[index]
-        return forecastArray.forEach(forecast => console.log(forecast))
-    }
-    function getCurrentPlace() 
-    {
-        return data.getPlace()
-    }
-    function clearCurrentPlace() {}
-    function getCurrentType() {}
-    function clearCurrentType() {}
-    function getCurrentPeriod() {}
-    function clearCurrentPeriod() {}
-    // setCurrentPeriod()
-
-    return { getWeatherForecast, add, data }
+return { getWeatherForecast, add, data }
 }
 
-let wf = weatherForecast(wp)
-wf.add(wp)
+const temp = [wp, wp]
+let wf = weatherForecast(temp)
+//wf.add(wp)
 console.log(wf.data())
-//console.log(wf.data(0))
 
 //     function WeatherEvent(place) {
 //     const event = { timeECMA: new Date().toLocaleDateString(), place };
