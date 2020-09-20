@@ -3,9 +3,9 @@ function dEvent(place)
 {
     const options = {place}
     let d = new Date()
-    let t = d.toLocaleTimeString(); //perhaps use this method to set the date at object creation
-    function getTime() { return t }
-    function getPlace() { return place }
+    options.t = d.toLocaleTimeString(); //perhaps use this method to set the date at object creation
+    function getTime() { return options.t }
+    function getPlace() { return options.place }
     function toString() 
     {
         return `Place: ${getPlace()}, Time - ${getTime()}`
@@ -14,23 +14,18 @@ function dEvent(place)
     return {...options, getTime, getPlace, toString }
 }
 
+console.log("Event Test")
+let time1 = dEvent("Copenhagen") //how to pass time into the object?
+console.log(time1.toString())
+console.log()
+
 //DataType
 function dataType(type, unit) 
 {
     const options = {type, unit}
-    let types = ["temperature", "precipitation", "wind", "cloud"]
-    function getType() 
-    { 
-        if(types.includes(type))
-        {
-            return type
-        }
-        else
-        {
-            return "Not an acceptable data type."
-        }
-    }
-    function getUnit() { return unit }
+    //let types = ["temperature", "precipitation", "wind", "cloud"]
+    function getType() {  return options.type }
+    function getUnit() { return options.unit }
     function toString() 
     {
         return `Type: ${getType()}, Units: ${getUnit()}`
@@ -39,11 +34,6 @@ function dataType(type, unit)
     return {...options, getType, getUnit, toString }
 }
 
-console.log("Event Test")
-let time1 = dEvent("Copenhagen") //how to pass time into the object?
-console.log(time1.toString())
-console.log()
-
 console.log("DataType Test")
 let dT = dataType("cloud", "Fahrenheit")
 console.log(dT.toString())
@@ -51,63 +41,71 @@ console.log(dT.getType())
 console.log()
 
 //WeatherPrediction
-function weatherPrediction(place, type, unit, fromNumber, toNumber)
+function weatherPrediction(dEvent, dataType, fromNumber, toNumber)
 {
     //inherit the time and then add to it because it is a prediction
-    const options = {place, type, unit}
-    function numberFrom() { return fromNumber }
-    function numberTo() { return toNumber }
+    const options = {fromNumber, toNumber} //raw variables
+    function getNumberFrom() { return options.fromNumber }
+    function getNumberTo() { return options.toNumber }
+
+    //Object.assign(options, dEvent(options.place), dataType(options.type, options.unit))
+    //Assigns everything from inside the passed parameters to the leftmost object.
+    Object.assign(options, dEvent, dataType)
     function toString() 
     {
-        return "Place: " + place + " Type: " + type + " Unit: " + unit + " From: " + 
-        fromNumber + " To: " + toNumber
+        return options.getPlace() + " " + options.getTime() + " " + options.getType() + " " + 
+        options.getUnit() + " From: " + options.fromNumber + " To: " + options.toNumber
     }
 
-    Object.assign(options, dEvent(options.place), dataType(options.type, options.unit))
-    return {...options, numberTo, numberFrom, toString }
+    return {...options, getNumberFrom, getNumberTo, toString }
 }
 
 console.log("WeatherPrediction Test")
-let wp = weatherPrediction(time1.getPlace(), dT.getType(), dT.getUnit(), 13, 20)
+let wp = weatherPrediction(time1, dT, 13, 20)
 //how do I pass the object values into the subclass?
 console.log(wp.toString())
-console.log(wp.numberFrom())
+console.log(wp.getNumberFrom())
+
 console.log()
 
 //TemperaturePrediction
-function tempPrediction(fromNumber, toNumber) //is there a way to get to and from wp
+function tempPrediction(weatherPrediction) //is there a way to get to and from wp
 {
-    const options = {fromNumber, toNumber}
+    const options = {}
+    Object.assign(options, weatherPrediction)
     function convertToF() 
 	{ 
-        fromNumber = (fromNumber * 1.8) + 32
-        toNumber = (toNumber * 1.8) + 32
+        options.fromNumber = (options.fromNumber * 1.8) + 32
+        options.toNumber = (options.toNumber * 1.8) + 32
 	}
 	function convertToC() 
 	{ 
-        fromNumber = (fromNumber - 32) / 1.8 
-        toNumber = (toNumber - 32) / 1.8 
+        options.fromNumber = (options.fromNumber - 32) / 1.8 
+        options.toNumber = (options.toNumber - 32) / 1.8 
     }
     function toString()
     {
-        return fromNumber + " " + toNumber + " " 
+        return options.fromNumber + " " + options.toNumber 
     }
 
-    Object.assign(options, weatherPrediction(options.fromNumber, options.toNumber))
+    //Object.assign(options, weatherPrediction(options.fromNumber, options.toNumber))
+    
     return { ...options, convertToC, convertToF, toString }
 }
 
 console.log("Temp test")
-let tp = tempPrediction(wp.numberFrom(), wp.numberTo())
+let tp = tempPrediction(wp)
 console.log(tp.toString())
 tp.convertToF()
 console.log(tp.toString())
-console.log(tp.numberTo())
+console.log(tp.fromNumber)
+console.log()
 
 //PrecipitationPrediction
-function precipPrediction(fromNumber, toNumber)
+function precipPrediction(weatherPrediction)
 {
-    const options = {fromNumber, toNumber}
+    const options = {}
+    Object.assign(options, weatherPrediction)
     //Return type of string array, it is possible to have different kinds of precip in one day
     function types() //the type is established in the super class datatype?  compares boolean
     {
@@ -116,63 +114,83 @@ function precipPrediction(fromNumber, toNumber)
     }
     function convertToInches()
     {
-        fromNumber = fromNumber / 25.4
-        toNumber = toNumber / 25.4
+        options.fromNumber = options.fromNumber / 25.4
+        options.toNumber = options.toNumber / 25.4
     }
     function convertToMM()
     {
-        fromNumber = fromNumber * 25.4
-        toNumber = toNumber * 25.4
+        options.fromNumber = options.fromNumber * 25.4
+        options.toNumber = options.toNumber * 25.4
     }
     function toString()
     {
-        return fromNumber + " " + toNumber + " " 
+        return options.fromNumber + " " + options.toNumber
     }
 
-    return { types, convertToInches, convertToMM, toString }
+    //Object.assign(options, weatherPrediction(options.fromNumber, options.toNumber))    
+    return { ...options, types, convertToInches, convertToMM, toString }
 }
 
+console.log("Precip test")
+let pp = precipPrediction(wp)
+console.log(pp.toString())
+pp.convertToInches()
+console.log(pp.toString())
+console.log()
+
 //WindPrediction
-function windPrediction(fromNumber, toNumber)
+function windPrediction(weatherPrediction)
 {
-    const options = {fromNumber, toNumber}
-    function directions() //the type is established in the super class datatype?
+    const options = {}
+    Object.assign(options, weatherPrediction)
+    function directions()
     {
         let direction = ["north", "south", "east", "west"]
         return direction
     }
     function convertToMPH()
     {
-        fromNumber = fromNumber * 2,237
-        toNumber = toNumber * 2,237
+        options.fromNumber = options.fromNumber * 2,237
+        options.toNumber = options.toNumber * 2,237
     }
     function convertToMS()
     {
-        fromNumber = fromNumber / 2,237
-        toNumber = toNumber / 2,237
+        options.fromNumber = options.fromNumber / 2,237
+        options.toNumber = options.toNumber / 2,237
     }
     function toString()
     {
-        return fromNumber + " " + toNumber + " " 
+        return options.fromNumber + " " + options.toNumber
     }
 
-    return { directions, convertToMPH, convertToMS, toString }
+    //Object.assign(options, weatherPrediction(options.fromNumber, options.toNumber))  
+    return { ...options, directions, convertToMPH, convertToMS, toString }
 }
 
+console.log("Wind test")
+let wwp = windPrediction(wp)
+console.log(wwp.toString())
+wwp.convertToMPH()
+console.log(wwp.toString())
+console.log()
+
 //CloudPrediction
-function cloudPrediction(number)
+function cloudPrediction(weatherPrediction)
 {
-    let clouds = ["no clouds", "partly cloudy", "overcast"]
+    const options = {}
+    Object.assign(options, weatherPrediction)
+    
     function coverage()
     {
-
+        let clouds = ["no clouds", "partly cloudy", "overcast"]
+        return clouds
     }
     function toString()
     {
-        return fromNumber + " " + toNumber + " " 
+        return options.fromNumber + " " + options.toNumber
     }
 
-    return { coverage, toString }
+    return { ...options, coverage, toString }
 }
 
 //DateInterval
@@ -195,28 +213,45 @@ function dateInterval(from, to)
 }
 
 //WeatherForecast
-function weatherForecast()
+function weatherForecast(data)
 {
-    function weatherForecast(data)
+    let forecastArray = []
+
+    function getWeatherForecast(data)
     {
         //returns the forecast
+        //forecastArray.forEach(forecast => console.log(forecast))
+        return forecastArray[data]
     }
     function add(data)
     {
         //adds predictions to the WeatherPrediction array
+        forecastArray.push(data)
     }
     function data()
     {
-        //returns a single prediction?
+        //returns a single prediction? 
+        //return forecastArray[index]
+        return forecastArray.forEach(forecast => console.log(forecast))
     }
-    function getCurrentPlace() {}
+    function getCurrentPlace() 
+    {
+        return data.getPlace()
+    }
     function clearCurrentPlace() {}
     function getCurrentType() {}
     function clearCurrentType() {}
     function getCurrentPeriod() {}
     function clearCurrentPeriod() {}
     // setCurrentPeriod()
+
+    return { getWeatherForecast, add, data }
 }
+
+let wf = weatherForecast(wp)
+wf.add(wp)
+console.log(wf.data())
+//console.log(wf.data(0))
 
 //     function WeatherEvent(place) {
 //     const event = { timeECMA: new Date().toLocaleDateString(), place };
