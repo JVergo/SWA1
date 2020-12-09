@@ -1,19 +1,19 @@
 function WeatherEvent(place) {
-    const event = { timeECMA: new Date().toLocaleDateString(), place };
+    const event = { time: new Date().toLocaleDateString(), place };
 
-    event.getTime = () => {
-        return event.timeECMA;
+    function getTime() {
+        return event.time;
     };
 
-    event.getPlace = () => {
+    function getPlace() {
         return event.place;
     }
 
-    event.setPlace = (newPlace) => {
+    function setPlace(newPlace) {
         event.place = newPlace;
     }
 
-    event.setTime = (newTime) => {
+    function setTime(newTime) {
         event.time = newTime;
     }
 
@@ -21,29 +21,29 @@ function WeatherEvent(place) {
         return `Place: ${getPlace()}, Time - ${getTime()}`;
     }
 
-    return event;
+    return { ...event, getTime, getPlace, setPlace, setTime, toString }
 }
 
 function dataType(unit, type) {
     const dataType = { unit: unit, type: type };
 
-    dataType.getUnit = () => {
+    function getUnit() {
         return dataType.unit;
     }
 
-    dataType.getType = () => {
+    function getType() {
         return dataType.type;
     }
 
-    dataType.setType = (newType) => {
+    function setType(newType) {
         dataType.type = newType;
     }
 
-    dataType.setUnit = (newUnit) => {
+    function setUnit(newUnit) {
         dataType.type = newUnit;
     }
 
-    return dataType;
+    return { ...dataType, getUnit, getType, setType, setUnit }
 }
 
 function WeatherData(dataType, event, number, direction) {
@@ -70,9 +70,9 @@ function WeatherData(dataType, event, number, direction) {
 
     return { ...weatherData, getDataType, getEvent, getNumber, getDirection };
 }
-const dT = new dataType('mm', 'international');
-const wE = new WeatherEvent('Horsens')
-const wD1 = new WeatherData(dT, wE, 1, 'NW');
+const dT = dataType('mm', 'international');
+const wE = WeatherEvent('Horsens');
+const wD1 = WeatherData(dT, wE, 1, 'NW');
 console.log('test dataType & WeatherEvent DONE');
 console.log();
 
@@ -93,8 +93,8 @@ function Temperature(weatherData) {
             weatherData.number = weatherData.number * (9 / 5) + 32;
             weatherData.unit = 'fahrenheit';
             weatherData.type = 'us';
-        };
-    };
+        }
+    }
 
     // (32°F − 32) × 5/9 = 0°C
     function convertToC() {
@@ -102,8 +102,8 @@ function Temperature(weatherData) {
             weatherData.number = (weatherData.number - 32) * (5 / 9);
             weatherData.unit = 'celsius';
             weatherData.type = 'international';
-        };
-    };
+        }
+    }
 
     return { convertToF, convertToC };
 }
@@ -119,7 +119,7 @@ function Precipitation(weatherData) {
             weatherData.unit = 'inches';
             weatherData.type = 'us'
         }
-    };
+    }
 
     function convertToMM() {
         if (weatherData.type == 'us') {
@@ -127,7 +127,7 @@ function Precipitation(weatherData) {
             weatherData.unit = 'mm';
             weatherData.type = 'international'
         }
-    };
+    }
 
     return { convertToInches, convertToMM }
 }
@@ -135,7 +135,7 @@ function Precipitation(weatherData) {
 function Wind(weatherData) {
     function getDirection() {
         return weatherData.direction;
-    };
+    }
 
     function convertToMPH() {
         if (weatherData.type == 'international') {
@@ -143,7 +143,7 @@ function Wind(weatherData) {
             weatherData.unit = 'mph';
             weatherData.type = 'us';
         }
-    };
+    }
 
     function convertToMS() {
         if (weatherData.type == 'us') {
@@ -151,7 +151,7 @@ function Wind(weatherData) {
             weatherData.unit = 'ms';
             weatherData.type = 'international'
         }
-    };
+    }
 
     return { getDirection, convertToMPH, convertToMS }
 }
@@ -170,8 +170,8 @@ function TemperatureData(weatherData) {
     return { ...temperatureData, ...Temperature(weatherData) };
 }
 
-let wD2 = new WeatherData(dT, wE, 1);
-let wD_TD = new TemperatureData(wD2);
+let wD2 = WeatherData(dT, wE, 1);
+let wD_TD = TemperatureData(wD2);
 console.log(wD_TD.getType());
 console.log(wD_TD.getPlace());
 console.log(wD_TD.number);
@@ -199,11 +199,11 @@ function CloudCoverageData(weatherData) {
 function WeatherHistory(currentType, currentPlace, weatherDataArr) {
     const weatherHistory = { weatherDataArr, currentPlace, currentType };
 
-    weatherHistory.getCurrentPlace = () => {
+    function getCurrentPlace() {
         return weatherHistory.currentPlace;
-    };
+    }
 
-    weatherHistory.setCurrentPlace = (newPlace) => {
+    function setCurrentPlace(newPlace) {
         //helper method 1
         function changePlace(weatherData) {
             weatherData.setPlace(newPlace);
@@ -213,11 +213,11 @@ function WeatherHistory(currentType, currentPlace, weatherDataArr) {
         weatherHistory.currentPlace = newPlace;
     }
 
-    weatherHistory.getCurrentType = () => {
+    function getCurrentType() {
         return weatherHistory.currentType;
     }
 
-    weatherHistory.setCurrentType = (newType) => {
+    function setCurrentType(newType) {
         //helper method 1
         function convertToUS(weatherData) {
             if (weatherData.getType() == 'temperature')
@@ -252,23 +252,23 @@ function WeatherHistory(currentType, currentPlace, weatherDataArr) {
     // function clearCurrentPeriod()
     // function convertToUsUnits()
     // function convertToInternationalUnits()
-    weatherHistory.addWeatherData = (weatherData) => {
+    function addWeatherData(weatherData) {
         if (weatherHistory.weatherDataArr.length == 7)
             weatherHistory.weatherDataArr.shift();
         // pushing a stream of objects into the array
         weatherHistory.weatherDataArr.push(...weatherData);
     }
 
-    weatherHistory.getWeatherData = () => {
+    function getWeatherData() {
         return weatherHistory;
     }
 
-    return weatherHistory;
+    return { ...weatherHistory, getCurrentPlace, setCurrentPlace, getCurrentType, setCurrentType, addWeatherData, getWeatherData }
 }
 
 
 // testing
-const testTemp = new TemperatureData(WeatherData(dataType('celsius', 'temperature'), WeatherEvent(1000000, 'Horsens'), 50));
+const testTemp = TemperatureData(WeatherData(dataType('celsius', 'temperature'), WeatherEvent('Horsens'), 50));
 // console.log(testTemp);
 console.log(testTemp.getType());
 console.log(testTemp.getUnit());
@@ -279,7 +279,7 @@ console.log(testTemp.convertToF());
 console.log('test TemperatureData DONE');
 console.log();
 
-const testPrecip = new PrecipitationData(WeatherData(dataType('mm', 'precipitation'), WeatherEvent(1000000, 'Horsens'), 1));
+const testPrecip = PrecipitationData(WeatherData(dataType('mm', 'precipitation'), WeatherEvent('Horsens'), 1));
 // console.log(testPrecip);
 console.log(testPrecip.getType());
 console.log(testPrecip.getUnit());
@@ -289,7 +289,7 @@ console.log(testPrecip.number);
 console.log('test PrecipitationData DONE');
 console.log();
 
-const testWind = new WindData(WeatherData(dataType('ms', 'wind'), WeatherEvent(1000000, 'Horsens'), 50, 'NW'));
+const testWind = WindData(WeatherData(dataType('ms', 'wind'), WeatherEvent('Horsens'), 50, 'NW'));
 // console.log(testWind);
 console.log(testWind.getType());
 console.log(testWind.getUnit());
@@ -300,7 +300,7 @@ console.log(testWind.direction);
 console.log('test WindData DONE');
 console.log();
 
-const testCloud = new CloudCoverageData(WeatherData(dataType('percentage', 'cloudCoverage'), WeatherEvent(1000000, 'Horsens'), 25));
+const testCloud = CloudCoverageData(WeatherData(dataType('percentage', 'cloudCoverage'), WeatherEvent('Horsens'), 25));
 // console.log(testCloud);
 console.log(testCloud.getType());
 console.log(testCloud.getUnit());
@@ -311,7 +311,7 @@ console.log('test CloudCoverageData DONE');
 console.log();
 
 const weatherDataArr = [testTemp, testPrecip, testWind];
-const weatherHistory = new WeatherHistory('international', 'Horsens', weatherDataArr);
+const weatherHistory = WeatherHistory('international', 'Horsens', weatherDataArr);
 // console.log(weatherHistory);
 console.log(weatherHistory.getCurrentPlace());
 console.log(weatherHistory.getCurrentType());
