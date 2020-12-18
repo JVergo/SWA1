@@ -115,7 +115,7 @@ function Precipitation(weatherData) {
 
     function convertToInches() {
         if (weatherData.type == 'international') {
-            weatherData.number = (weatherData.number / 25.4);
+            weatherData.number = (weatherData.number * 0.0393701);
             weatherData.unit = 'inches';
             weatherData.type = 'us'
         }
@@ -123,7 +123,7 @@ function Precipitation(weatherData) {
 
     function convertToMM() {
         if (weatherData.type == 'us') {
-            weatherData.number = (weatherData.number * 0.0393701);
+            weatherData.number = (weatherData.number / 0.0393701);
             weatherData.unit = 'mm';
             weatherData.type = 'international'
         }
